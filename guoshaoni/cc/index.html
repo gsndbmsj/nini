@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/index.css">
+    <script src="js/vue.js"></script>
+    <script src="js/component.js"></script>
+</head>
+<body>
+<div id="root">
+    <custom-input @changeinput="aa" :title="title"></custom-input>
+    <custom-list :list-data="list" :state="state" @changelist="bb"></custom-list>
+</div>
+</body>
+</html>
+<script src="js/index.js"></script>

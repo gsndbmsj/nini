@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="vue.js"></script>
+    <style>
+        .box{
+            width:500px;
+            height: auto;
+            margin: 0 auto;
+            /*background: darkred;*/
+        }
+        .box1{
+            width: 100%;
+            padding: 5px 3px;
+            outline: none;
+        }
+        .box2{
+            margin-top: 5px;
+            display: block;
+            float: right;
+            margin-bottom: 5px;
+        }
+        .box3 li {
+            width: 100%;
+            height: 20px;
+            margin-top: 10px;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #000;
+        }
+        .check1{
+            width: 10px;
+            height:10px;
+            border-radius: 50%;
+            border: 1px solid #000000;
+
+        }
+        .check{
+            color: #ff020a;
+        }
+        .color{
+            background: red;
+        }
+    </style>
+</head>
+<body>
+<div class="root">
+    <div class="box">
+        <input type="text" v-model="con" class="box1" placeholder="请输入事情" @keyup.13="add" v-focus>
+        <input type="button" value="未完成" class="box2" @click="changeStatus('0')" :class="{check:status=='0'}">
+        <input type="button" value="已完成" class="box2" @click="changeStatus('1')" :class="{check:status=='1'}">
+        <input type="button" value="全部" class="box2" @click="changeStatus('all')" :class="{check:status=='all'}">
+        <ul class="box3">
+        <li v-for="item in datas" v-if="item.edit" @dblclick="edit(item)">
+            <div class="check1" @click="changeState(item)" :class="{color:item.state=='1'}"></div>
+            <div>{{item.title}}</div>
+            <button class="del" @click="del(item.id)">删除</button>
+        </li>
+        <input type="text" v-else v-model="item.title" @blur="edit(item)" style="width:100%">
+        </ul>
+        <div v-show="all.length==0">没有数据</div>
+    </div>
+</div>
+
+</body>
+</html>
+<script>
+    Vue.directive("focus",{
+        inserted:function(val1,val2){
+            val1.focus();
+        }
+    })
+    var obj=new Vue({
+        el:".root",
+        data:{
+            all: localStorage.todo?JSON.parse(localStorage.todo):[],
+            con:"",
+            status:"",
+
+        },
+        methods:{
+            add:function () {
+                if(!this.con){
+                    alert("请输入信息");
+                    return;
+                }
+                var obj={};
+                obj.title=this.con;
+                obj.id=Math.random()+new Date().getTime();
+                obj.state=0;
+
+                this.all.push(obj);
+                localStorage.todo=JSON.stringify(this.all);
+                this.con="";
+            },
+            changeStatus(val){
+                this.status=val
+            },
+            changeState(obj){
+                if(obj.state==0){
+                    obj.state=1
+                }else{
+                    obj.state=0
+                }
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            del(id){
+                this.all=this.all.filter((element)=>{
+                    return element.id!=id
+                })
+                localStorage.todo=JSON.stringify(this.all);
+            },
+            edit(obj){
+                obj.edit = !obj.edit;
+                localStorage.todo = JSON.stringify(this.all);
+            }
+        },
+        computed:{
+            datas(){
+                return this.all.filter((a)=>{
+                    if(this.status=="all"){
+                        return a;
+                    }else{
+                        if(a.state==this.status){
+                            return a;
+                        }
+                    }
+                })
+            }
+        }
+    })
+
+
+
+
+
+</script>
